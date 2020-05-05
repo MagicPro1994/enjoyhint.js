@@ -4,26 +4,18 @@ var EnjoyHint = function (_options) {
     var that = this;
 
     var defaults = {
-
         onStart: function () {
-
         },
-
         onEnd: function () {
-
         },
-
         onSkip: function () {
-
         },
-
         onNext: function () {
-
         },
-
         container: 'body',
-
-        animation_time: 800
+        animation_time: 800,
+        show_close: false,
+        scroll_to_element: false,
     };
 
     var options = $.extend(defaults, _options);
@@ -36,31 +28,28 @@ var EnjoyHint = function (_options) {
     /********************* PRIVATE METHODS ***************************************/
 
     var init = function () {
-
         if ($('.enjoyhint')) {
-
             $('.enjoyhint').remove();
         }
 
         $body.enjoyhint({
 
             onNextClick: function () {
-
                 nextStep();
             },
 
             onSkipClick: function () {
-
                 options.onSkip();
                 skipAll();
             },
 
-            animation_time: options.animation_time
+            animation_time: options.animation_time,
+            show_close: options.show_close,
+            scroll_to_element: options.scroll_to_element
         });
     };
 
     var lockTouch = function(e) {
-
         e.preventDefault();
     };
 
@@ -72,8 +61,7 @@ var EnjoyHint = function (_options) {
         $(document).off("touchmove", lockTouch);
     };
 
-    that.clear = function(){
-
+    that.clear = function() {
         var $nextBtn = $('.enjoyhint_next_btn');
         var $skipBtn = $('.enjoyhint_skip_btn');
 
@@ -135,28 +123,32 @@ var EnjoyHint = function (_options) {
                 that.clear();
             }, 250);
 
-            $body.scrollTo(step_data.selector, step_data.scrollAnimationSpeed || 250, {offset: -100});
+            if (step_data.scroll_to_element) {
+                $body.scrollTo(step_data.selector, step_data.scrollAnimationSpeed || 250, {offset: -100});
+            } else {
+                var $element = $(step_data.selector);
+                if ($element.length > 0) {
+                    $element.get(0).scrollIntoView(false);
+                }
+            }
+            
 
             setTimeout(function () {
-
                 var $element = $(step_data.selector);
                 var event = makeEventName(step_data.event);
 
                 $body.enjoyhint('show');
                 $body.enjoyhint('hide_next');
+                $body.enjoyhint('hide_close');
                 $event_element = $element;
 
                 if (step_data.event_selector) {
-
                     $event_element = $(step_data.event_selector);
                 }
 
                 if (!step_data.event_type && step_data.event == "key") {
-
                     $element.keydown(function (event) {
-
                         if (event.which == step_data.keyCode) {
-
                             current_step++;
                             stepAction();
                         }
@@ -164,97 +156,73 @@ var EnjoyHint = function (_options) {
                 }
 
                 if (step_data.showNext == true) {
-
                     $body.enjoyhint('show_next');
                 }
 
                 if (step_data.showSkip == false) {
-
                     $body.enjoyhint('hide_skip');
                 } else {
-
                     $body.enjoyhint('show_skip');
                 }
 
-                if (step_data.showSkip == true) {
-
+                if (step_data.showClose == true) {
+                    $body.enjoyhint('show_close');
                 }
 
                 if (step_data.nextButton) {
-
                     var $nextBtn = $('.enjoyhint_next_btn');
-
                     $nextBtn.addClass(step_data.nextButton.className || "");
                     $nextBtn.text(step_data.nextButton.text || "Next");
                     that.nextUserClass = step_data.nextButton.className;
                 }
 
                 if (step_data.skipButton) {
-
                     var $skipBtn = $('.enjoyhint_skip_btn');
-
                     $skipBtn.addClass(step_data.skipButton.className || "");
                     $skipBtn.text(step_data.skipButton.text || "Skip");
                     that.skipUserClass = step_data.skipButton.className;
                 }
 
                 if (step_data.event_type) {
-
                     switch (step_data.event_type) {
-
                         case 'auto':
-
                             $element[step_data.event]();
-
                             switch (step_data.event) {
-
                                 case 'click':
                                     break;
                             }
-
                             current_step++;
                             stepAction();
-
                             return;
-                            break;
-
                         case 'custom':
-
                             on(step_data.event, function () {
-
                                 current_step++;
                                 off(step_data.event);
                                 stepAction();
                             });
-
                             break;
-
                         case 'next':
-
                             $body.enjoyhint('show_next');
                             break;
                     }
-
                 } else {
-
                     $event_element.on(event, function (e) {
-
                         if (step_data.keyCode && e.keyCode != step_data.keyCode) {
-
                             return;
                         }
-
                         current_step++;
                         $(this).off(event);
-
                         stepAction(); // clicked
                     });
                 }
 
                 var updateShapeData = function () {
                     $element = $(step_data.selector);
+                    if ($element.length < 1) {
+                        return;
+                    }
 
-                    var rect = $element[0].getBoundingClientRect();
+                    var rect = $element.get(0).getBoundingClientRect();
                     var w = rect.width;
                     var h = rect.height;
                     var max_habarites = Math.max(w, h);
@@ -285,7 +253,6 @@ var EnjoyHint = function (_options) {
                         shape_data.shape = 'circle';
                         shape_data.radius = radius;
                     } else {
-
                         shape_data.radius = 0;
                         shape_data.width = w + shape_margin;
                         shape_data.height = h + shape_margin;
@@ -297,7 +264,6 @@ var EnjoyHint = function (_options) {
                 $body.enjoyhint('render_label_with_shape', _shape_data, that.stop, updateShapeData);
 
                 if (step_data.event == "next") {
-
                     $body.enjoyhint('disable_element_events');
                 }
             }, step_data.scrollAnimationSpeed + 20 || 270);
@@ -324,17 +290,14 @@ var EnjoyHint = function (_options) {
     };
 
     var makeEventName = function (name, is_custom) {
-
         return name + (is_custom ? 'custom' : '') + '.enjoy_hint';
     };
 
     var on = function (event_name, callback) {
-
         $body.on(makeEventName(event_name, true), callback);
     };
 
     var off = function (event_name) {
-
         $body.off(makeEventName(event_name, true));
     };
 
@@ -342,14 +305,12 @@ var EnjoyHint = function (_options) {
     /********************* PUBLIC METHODS ***************************************/
 
     $(window).on('resize.enjoy_hint_permanent', function() {
-
         if ($event_element[0]) {
             $body.enjoyhint('redo_events_near_rect', $event_element[0].getBoundingClientRect());
         }
     });
 
     that.stop = function() {
-
         skipAll();
     };
 
