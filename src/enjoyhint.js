@@ -89,7 +89,6 @@ var EnjoyHint = function (_options) {
         var step_data = data[current_step];
 
         if (step_data.onBeforeStart && typeof step_data.onBeforeStart === 'function') {
-
             step_data.onBeforeStart();
         }
 
@@ -132,7 +131,6 @@ var EnjoyHint = function (_options) {
                 }
             }
             
-
             setTimeout(function () {
                 var $element = $(step_data.selector);
                 var event = makeEventName(step_data.event);
@@ -239,6 +237,8 @@ var EnjoyHint = function (_options) {
                         enjoyHintElementSelector: step_data.selector,
                         center_x: coords.x,
                         center_y: coords.y,
+                        label_offset_x: step_data.label_offset_x || 0,
+                        label_offset_y: step_data.label_offset_y || 0,
                         text: step_data.description,
                         top: step_data.top,
                         bottom: step_data.bottom,
@@ -249,7 +249,6 @@ var EnjoyHint = function (_options) {
                     };
 
                     if (step_data.shape && step_data.shape == 'circle') {
-
                         shape_data.shape = 'circle';
                         shape_data.radius = radius;
                     } else {
@@ -289,15 +288,15 @@ var EnjoyHint = function (_options) {
        $element.off(makeEventName(step_data.event), true);
     };
 
-    var makeEventName = function (name, is_custom) {
+    var makeEventName = function(name, is_custom) {
         return name + (is_custom ? 'custom' : '') + '.enjoy_hint';
     };
 
-    var on = function (event_name, callback) {
+    var on = function(event_name, callback) {
         $body.on(makeEventName(event_name, true), callback);
     };
 
-    var off = function (event_name) {
+    var off = function(event_name) {
         $body.off(makeEventName(event_name, true));
     };
 
@@ -330,17 +329,14 @@ var EnjoyHint = function (_options) {
     };
 
     that.resumeScript = function () {
-
         stepAction();
     };
 
     that.setCurrentStep = function(cs) {
-
         current_step = cs;
     };
 
     that.getCurrentStep = function () {
-
         return current_step;
     };
 

@@ -29,7 +29,10 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     onNextClick: function() { },
                     onSkipClick: function() { },
 
+                    container: 'body',
                     animation_time: 800,
+                    show_close: false,
+                    scroll_to_element: false,
                 };
 
                 this.enjoyhint_obj = {};
@@ -442,7 +445,6 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var x = data.x || 0;
                     that.originalElementX = x;
                     var y = data.y || 0;
-                    var text = data.text || 0;
 
                     var label = that.getLabelElement({
                         x: x,
@@ -765,15 +767,17 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var label_shift = 150;
                     var label_ver_offset = half_h + label_shift;
 
-                    var label_y =
-                        label_ver_side == "top"
+                    var label_y = label_ver_side == "top"
                             ? data.center_y - label_ver_offset - label_height
                             : data.center_y + label_ver_offset;
                     var button_spacing = 20;
                     var button_height = 40;
                     var total_label_height =
                         label_height + button_spacing + button_height + 20; // Top of label to bottom of buttons
-
+                    
+                    // Adjust label offset - y axis
+                    label_y = label_y + + data.label_offset_y;
+                    
                     // Attempt to cleanly prevent y axis overflow
                     if (label_y + total_label_height > window.innerHeight) {
                         label_y = window.innerHeight - total_label_height;
@@ -782,7 +786,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                         label_y = 0;
                     }
 
-                    var label_x = window.innerWidth / 2 - label_width / 2;
+                    var label_x = window.innerWidth / 2 - label_width / 2 + data.label_offset_x;
 
                     var label_data = that.renderLabel({
                         x: label_x,
@@ -902,7 +906,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var label_conn_coordinates = label_data.conn[conn_label_side];
                     var circle_conn_coordinates = shape_data.conn[conn_circle_side];
                     var by_top_side = arrow_side == "top";
-
+                    
                     that.renderArrow({
                         x_from: label_conn_coordinates.x,
                         y_from: label_conn_coordinates.y,
