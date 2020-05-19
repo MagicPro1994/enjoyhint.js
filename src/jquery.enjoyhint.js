@@ -457,7 +457,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var label_left = label.offset().left;
                     var label_right = label.offset().left + label_w;
                     var label_top = label.offset().top - $(document).scrollTop();
-                    var label_bottom = label.offset().top + label_h;
+                    var label_bottom = label_top + label_h;
 
                     var margin = 10;
 
