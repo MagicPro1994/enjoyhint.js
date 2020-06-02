@@ -73,6 +73,9 @@ var enjoyhint_script_steps = [
 #### Properties of instance configuration
 * `container` - scrollable container (default `body`)
 * `animation_time` - time between scroll animation and arrow render (default ms `800`)
+* `show_close` - shows or hides the Close button (true|false)
+* `scroll_option` - scroll options (`scroll_to`|`scroll_into_view_top`|default `scroll_into_view_bottom`)
+* `debug_step` - show debug step on console log (true|false)
 
 ```javascript
 //initialize instance
@@ -97,7 +100,8 @@ var enjoyhint_instance = new EnjoyHint({
 
 #### Properties of the step configuration
 * `"event selector" : "description"` - to describe a step you should set an event type, selecte element and add description for this element (hint)
-* `description
+* `event_type` - the non-standard event
+* `description` - the description for the selector element
 * `keyCode` - the code of a button, which triggers the next EnjoyHint step upon a click. Defined by the “key” event. (“key #block” : “hello”).
 * `event_selector` - if you need to attach an event (that was set in "event" property) to other selector, you can use this one  
 * `timeout` - delay before the moment, when an element is highlighted   
@@ -109,6 +113,8 @@ var enjoyhint_instance = new EnjoyHint({
 * `bottom` - bottom margin for the shape of "rect" type  
 * `left` - left margin for the shape of "rect" type
 * `scrollAnimationSpeed` - sets the auto scroll speed (ms).
+* `label_offset_x` - adjust the horizontal position of the label.
+* `label_offset_y` - adjust the vertical position of the label.
 * `nextButton` - allows applying its classes and names for the button Nеxt.
 * `skipButton` - allows applying its classes and names for the button Skip. For the example :
 ```javascript
@@ -147,7 +153,17 @@ enjoyhint_instance.set( [ {
 ```
 * `next` - Wait for next button to be pushed.
 * `key` - Wait for button defined by the `keyCode` step parameter to be triggered on element.
-
+* `no-skip` - Do not show Next or Skip, you need make an event to move to next step.
+```javascript
+enjoyhint_instance.set( [ {
+    'no-skip .select-panel': 'This step will move to next step in 2s.',
+    onBeforeStart: function () {
+      setTimeout(function () {
+        enjoyhint_instance.trigger('next');
+      }, 2000);
+    }
+} ] );
+```
 
 #### Tour Methods
 * `stop()` - End script
@@ -157,8 +173,9 @@ enjoyhint_instance.set( [ {
 * `run()` - Run the current script.
 * `resume()` - Resume the script from the step where it was stopped.
 * `getCurrentStep()` - Returns the current step index.
-* `trigger( "next" | "skip" | custom_event_name )` - Trigger the relevant script action.
+* `trigger( "next" | "skip" | "ignore_step" | custom_event_name )` - Trigger the relevant script action.
 * `previousStep()` - Go to the most recent valid step. Useful for implementing a back button.
+* `ignoreCurrentStep()` - Ignore current step. Useful for implement auto-next step.
 
 
 #### Events
@@ -178,6 +195,17 @@ var enjoyhint_script_steps = [
 ```
 
 #### Changelogs
+
+##### 1.2.4
+* Fix issues on invalid elements
+* Fix arrow render issue when scrolling
+* Add ignoreCurrentStep()
+* Add property label_offset_x
+* Add property label_offset_y
+* Add no-skip event
+* Add debug_step as a parameter
+* Add scroll_option as a parameter
+* Add show_close as a parameter
 
 ##### 1.2.2
 * Prevent y axis overflow when hint is near the bottom of the screen

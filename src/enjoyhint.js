@@ -15,12 +15,14 @@ var EnjoyHint = function (_options) {
         container: 'body',
         animation_time: 800,
         show_close: false,
-        scroll_to_element: false,
+        scroll_option: 'scroll_into_view_bottom',
+        debug_step: false,
     };
 
     var options = $.extend(defaults, _options);
     var data = [];
     var current_step = 0;
+    var ignore_toggle = false;
 
     $body = $(options.container);
 
@@ -43,13 +45,11 @@ var EnjoyHint = function (_options) {
                 skipAll();
             },
 
-            animation_time: options.animation_time,
-            show_close: options.show_close,
-            scroll_to_element: options.scroll_to_element
+            animation_time: options.animation_time
         });
     };
 
-    var lockTouch = function(e) {
+    var lockTouch = function (e) {
         e.preventDefault();
     };
 
@@ -57,11 +57,11 @@ var EnjoyHint = function (_options) {
         options.onEnd();
         $body.enjoyhint('clear');
         $body.enjoyhint('hide');
-        $body.css({'overflow':'auto'});
+        $body.css({ 'overflow': 'auto' });
         $(document).off("touchmove", lockTouch);
     };
 
-    that.clear = function() {
+    that.clear = function () {
         var $nextBtn = $('.enjoyhint_next_btn');
         var $skipBtn = $('.enjoyhint_skip_btn');
 
@@ -92,9 +92,21 @@ var EnjoyHint = function (_options) {
             step_data.onBeforeStart();
         }
 
+        if (options.debug_step) {
+            console.log(current_step + " " + ignore_toggle);
+            console.log(step_data);
+        }
+
         var timeout = step_data.timeout || 0;
+        var scrollOption = step_data.scrollOption || options.scroll_option;
 
         setTimeout(function () {
+            if (ignore_toggle) {
+                // We only ignore once, so we reset to false
+                ignore_toggle = false;
+                nextStep();
+                return;
+            }
 
             if (!step_data.selector) {
 
@@ -118,26 +130,37 @@ var EnjoyHint = function (_options) {
             }
 
             setTimeout(function () {
-
                 that.clear();
             }, 250);
 
-            if (step_data.scroll_to_element) {
-                $body.scrollTo(step_data.selector, step_data.scrollAnimationSpeed || 250, {offset: -100});
-            } else {
-                var $element = $(step_data.selector);
-                if ($element.length > 0) {
-                    $element.get(0).scrollIntoView(false);
-                }
+            switch (scrollOption) {
+                case 'scroll_to':
+                    $body.scrollTo(step_data.selector, step_data.scrollAnimationSpeed || 250, { offset: -100 });
+                    break;
+                case 'scroll_into_view_top':
+                    var $scroll_element = $(step_data.selector);
+                    if ($scroll_element.length > 0) {
+                        $scroll_element.get(0).scrollIntoView(true);
+                    }
+                    break;
+                case 'scroll_into_view_bottom':
+                    var $scroll_element = $(step_data.selector);
+                    if ($scroll_element.length > 0) {
+                        $scroll_element.get(0).scrollIntoView(false);
+                    }
+                    break;
             }
-            
+
             setTimeout(function () {
                 var $element = $(step_data.selector);
                 var event = makeEventName(step_data.event);
 
                 $body.enjoyhint('show');
                 $body.enjoyhint('hide_next');
-                $body.enjoyhint('hide_close');
+
+                if (options.show_close == false)
+                    $body.enjoyhint('hide_close');
+
                 $event_element = $element;
 
                 if (step_data.event_selector) {
@@ -201,6 +224,9 @@ var EnjoyHint = function (_options) {
                             break;
                         case 'next':
                             $body.enjoyhint('show_next');
+                            break;
+                        case 'no-skip':
+                            $body.enjoyhint('hide_skip');
                             break;
                     }
                 } else {
@@ -269,59 +295,63 @@ var EnjoyHint = function (_options) {
         }, timeout);
     };
 
-    var nextStep = function() {
+    var nextStep = function () {
         current_step++;
         stepAction();
     };
 
-    var skipAll = function() {
-       stopRunningStep();
-       destroyEnjoy();
+    var ignoreCurrentStep = function () {
+        ignore_toggle = true;
+    }
+
+    var skipAll = function () {
+        stopRunningStep();
+        destroyEnjoy();
     };
 
-    var stopRunningStep = function() {
-       var step_data = data[current_step];
-       var $element = $(step_data.selector);
+    var stopRunningStep = function () {
+        var step_data = data[current_step];
+        var $element = $(step_data.selector);
 
-       off(step_data.event);
-       $element.off(makeEventName(step_data.event));
-       $element.off(makeEventName(step_data.event), true);
+        off(step_data.event);
+        $element.off(makeEventName(step_data.event));
+        $element.off(makeEventName(step_data.event), true);
     };
 
-    var makeEventName = function(name, is_custom) {
+    var makeEventName = function (name, is_custom) {
         return name + (is_custom ? 'custom' : '') + '.enjoy_hint';
     };
 
-    var on = function(event_name, callback) {
+    var on = function (event_name, callback) {
         $body.on(makeEventName(event_name, true), callback);
     };
 
-    var off = function(event_name) {
+    var off = function (event_name) {
         $body.off(makeEventName(event_name, true));
     };
 
 
     /********************* PUBLIC METHODS ***************************************/
 
-    $(window).on('resize.enjoy_hint_permanent', function() {
+    $(window).on('resize.enjoy_hint_permanent', function () {
         if ($event_element[0]) {
             $body.enjoyhint('redo_events_near_rect', $event_element[0].getBoundingClientRect());
         }
     });
 
-    that.stop = function() {
+    that.stop = function () {
         skipAll();
     };
 
-    that.reRunScript = function(cs) {
+    that.reRunScript = function (cs) {
         stopRunningStep();
         current_step = cs;
         stepAction();
     };
 
     that.runScript = function () {
-        $body.css({'overflow':'hidden'});
-        $(document).on("touchmove",lockTouch);
+        $body.css({ 'overflow': 'hidden' });
+        $(document).on("touchmove", lockTouch);
 
         current_step = 0;
         options.onStart();
@@ -332,7 +362,7 @@ var EnjoyHint = function (_options) {
         stepAction();
     };
 
-    that.setCurrentStep = function(cs) {
+    that.setCurrentStep = function (cs) {
         current_step = cs;
     };
 
@@ -341,19 +371,16 @@ var EnjoyHint = function (_options) {
     };
 
     that.trigger = function (event_name) {
-
         switch (event_name) {
-
             case 'next':
-
                 nextStep();
                 break;
-
             case 'skip':
-
                 skipAll();
                 break;
-
+            case 'ignore_step':
+                ignoreCurrentStep();
+                break;
             // Trigger a custom event
             default:
                 $body.trigger(makeEventName(event_name, true));
@@ -362,9 +389,7 @@ var EnjoyHint = function (_options) {
     };
 
     that.setScript = function (_data) {
-
         if (_data) {
-
             data = _data;
         }
     };
@@ -372,37 +397,30 @@ var EnjoyHint = function (_options) {
     // Goes to the most recent valid user triggered step
     that.previousStep = function () {
         current_step--;
-
         // If the element of this step is no longer visible (like a modal, or a different tab) we want to keep going back.
         while (current_step > 0 && (data[current_step].event_type === "auto" || $(data[current_step].selector).is(':visible') === false)) {
             current_step--;
         }
-
         if (current_step <= 0) {
             current_step = 0;
         }
-
         that.reRunScript(current_step);
     };
 
     //support deprecated API methods
     that.set = function (_data) {
-
         that.setScript(_data);
     };
 
     that.setSteps = function (_data) {
-
         that.setScript(_data);
     };
 
     that.run = function () {
-
         that.runScript();
     };
 
     that.resume = function () {
-
         that.resumeScript();
     };
 

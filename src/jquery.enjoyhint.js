@@ -29,10 +29,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     onNextClick: function() { },
                     onSkipClick: function() { },
 
-                    container: 'body',
                     animation_time: 800,
-                    show_close: false,
-                    scroll_to_element: false,
                 };
 
                 this.enjoyhint_obj = {};
@@ -776,7 +773,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                         label_height + button_spacing + button_height + 20; // Top of label to bottom of buttons
                     
                     // Adjust label offset - y axis
-                    label_y = label_y + + data.label_offset_y;
+                    label_y = label_y + data.label_offset_y;
                     
                     // Attempt to cleanly prevent y axis overflow
                     if (label_y + total_label_height > window.innerHeight) {
@@ -991,6 +988,14 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
         hide_close: function() {
             this.each(function() {
                 this.enjoyhint_obj.hideCloseBtn();
+            });
+
+            return this;
+        },
+
+        show_close: function() {
+            this.each(function() {
+                this.enjoyhint_obj.showCloseBtn();
             });
 
             return this;
