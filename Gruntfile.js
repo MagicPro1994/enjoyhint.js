@@ -39,14 +39,22 @@ module.exports = function(grunt){
                     'dist/enjoyhint.css': ['src/jquery.enjoyhint.css']
                 }
             }
-        }
+        },
+        copy: {
+            main: {
+                expand: true,
+                src: 'fonts/**',
+                dest: 'dist/',
+            },
+        },
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask("default", ["concat", "uglify", "cssmin"])
+    grunt.registerTask("default", ["concat", "uglify", "cssmin", "copy"])
 
 };

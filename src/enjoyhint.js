@@ -271,7 +271,8 @@ var EnjoyHint = function (_options) {
                         left: step_data.left,
                         right: step_data.right,
                         margin: step_data.margin,
-                        scroll: step_data.scroll
+                        scroll: step_data.scroll,
+                        hidden: step_data.hidden || false
                     };
 
                     if (step_data.shape && step_data.shape == 'circle') {
@@ -284,6 +285,7 @@ var EnjoyHint = function (_options) {
                     }
                     return shape_data;
                 };
+
                 var _shape_data = updateShapeData();
 
                 $body.enjoyhint('render_label_with_shape', _shape_data, that.stop, updateShapeData);
