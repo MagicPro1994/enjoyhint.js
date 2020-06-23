@@ -273,7 +273,8 @@
                         left: step_data.left,
                         right: step_data.right,
                         margin: step_data.margin,
-                        scroll: step_data.scroll
+                        scroll: step_data.scroll,
+                        hidden: step_data.hidden || false
                     };
 
                     if (step_data.shape && step_data.shape == 'circle') {
@@ -1132,11 +1133,13 @@
                             data.center_x = sides_pos.left + new_half_w;
                             data.center_y = sides_pos.top + new_half_h;
 
-                            shape_data = that.renderCircle({
-                                x: data.center_x,
-                                y: data.center_y,
-                                r: data.radius,
-                            });
+                            if (that.stepData.hidden == false) {
+                                shape_data = that.renderCircle({
+                                    x: data.center_x,
+                                    y: data.center_y,
+                                    r: data.radius,
+                                });
+                            }
 
                             break;
 
@@ -1161,16 +1164,18 @@
                             data.center_x = sides_pos.left + half_w;
                             data.center_y = sides_pos.top + half_h;
 
-                            shape_data = that.renderRect(
-                                {
-                                    x: data.center_x,
-                                    y: data.center_y,
-                                    w: data.width,
-                                    h: data.height,
-                                    r: data.radius,
-                                },
-                                0.2
-                            );
+                            if (that.stepData.hidden == false) {
+                                shape_data = that.renderRect(
+                                    {
+                                        x: data.center_x,
+                                        y: data.center_y,
+                                        w: data.width,
+                                        h: data.height,
+                                        r: data.radius,
+                                    },
+                                    0.2
+                                );
+                            }
 
                             break;
                     }
@@ -1335,19 +1340,21 @@
                     var circle_conn_coordinates = shape_data.conn[conn_circle_side];
                     var by_top_side = arrow_side == "top";
 
-                    that.renderArrow({
-                        x_from: label_conn_coordinates.x,
-                        y_from: label_conn_coordinates.y,
-                        x_to:
-                            window.innerWidth < 640
-                                ? shape_data.left + (shape_data.left > 0)
-                                : circle_conn_coordinates.x,
-                        y_to:
-                            window.innerWidth < 640
-                                ? shape_data.conn.left.y
-                                : circle_conn_coordinates.y,
-                        by_top_side: by_top_side,
-                    });
+                    if (that.stepData.hidden == false) {
+                        that.renderArrow({
+                            x_from: label_conn_coordinates.x,
+                            y_from: label_conn_coordinates.y,
+                            x_to:
+                                window.innerWidth < 640
+                                    ? shape_data.left + (shape_data.left > 0)
+                                    : circle_conn_coordinates.x,
+                            y_to:
+                                window.innerWidth < 640
+                                    ? shape_data.conn.left.y
+                                    : circle_conn_coordinates.y,
+                            by_top_side: by_top_side,
+                        });
+                    }
                 };
 
                 that.clear = function() {

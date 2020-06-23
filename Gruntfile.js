@@ -43,8 +43,10 @@ module.exports = function(grunt){
         copy: {
             main: {
                 expand: true,
+                flatten: true,
                 src: 'fonts/**',
                 dest: 'dist/',
+                filter: 'isFile'
             },
         },
     });
