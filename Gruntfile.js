@@ -45,7 +45,7 @@ module.exports = function(grunt){
                 expand: true,
                 flatten: true,
                 src: 'fonts/**',
-                dest: 'dist/',
+                dest: 'dist/fonts/',
                 filter: 'isFile'
             },
         },
