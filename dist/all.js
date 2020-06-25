@@ -975,34 +975,37 @@
                     that.enjoyhint.addClass(that.cl.svg_transparent);
 
                     setTimeout(function() {
-                        $("#enjoyhint_arrpw_line").remove();
+                        $("#enjoyhint_arrow_line").remove();
 
-                        var d =
-                            "M" +
-                            x_from +
-                            "," +
-                            y_from +
-                            " C" +
-                            control_point_x1 +
-                            "," +
-                            control_point_y1 +
-                            " " +
-                            control_point_x +
-                            "," +
-                            control_point_y +
-                            " " +
-                            x_to +
-                            "," +
-                            y_to;
+                        if (that.stepData.hidden == false) {
+                            var d =
+                                "M" +
+                                x_from +
+                                "," +
+                                y_from +
+                                " C" +
+                                control_point_x1 +
+                                "," +
+                                control_point_y1 +
+                                " " +
+                                control_point_x +
+                                "," +
+                                control_point_y +
+                                " " +
+                                x_to +
+                                "," +
+                                y_to;
 
-                        that.$svg.append(
-                            makeSVG("path", {
-                                style: "fill:none; stroke:rgb(255,255,255); stroke-width:3",
-                                "marker-end": "url(#arrowMarker)",
-                                d: d,
-                                id: "enjoyhint_arrpw_line",
-                            })
-                        );
+                            that.$svg.append(
+                                makeSVG("path", {
+                                    style: "fill:none; stroke:rgb(255,255,255); stroke-width:3",
+                                    "marker-end": "url(#arrowMarker)",
+                                    d: d,
+                                    id: "enjoyhint_arrow_line",
+                                })
+                            );
+                        }
+
                         that.enjoyhint.removeClass(that.cl.svg_transparent);
                     }, that.options.animation_time / 2);
                 };
@@ -1336,29 +1339,27 @@
                         );
                     }
 
-                    if (that.stepData.hidden == false) {
-                        var label_conn_coordinates = label_data.conn[conn_label_side];
-                        var circle_conn_coordinates = shape_data.conn[conn_circle_side];
-                        var by_top_side = arrow_side == "top";
+                    var label_conn_coordinates = label_data.conn[conn_label_side];
+                    var circle_conn_coordinates = shape_data.conn[conn_circle_side];
+                    var by_top_side = arrow_side == "top";
 
-                        that.renderArrow({
-                            x_from: label_conn_coordinates.x,
-                            y_from: label_conn_coordinates.y,
-                            x_to:
-                                window.innerWidth < 640
-                                    ? shape_data.left + (shape_data.left > 0)
-                                    : circle_conn_coordinates.x,
-                            y_to:
-                                window.innerWidth < 640
-                                    ? shape_data.conn.left.y
-                                    : circle_conn_coordinates.y,
-                            by_top_side: by_top_side,
-                        });
-                    }
+                    that.renderArrow({
+                        x_from: label_conn_coordinates.x,
+                        y_from: label_conn_coordinates.y,
+                        x_to:
+                            window.innerWidth < 640
+                                ? shape_data.left + (shape_data.left > 0)
+                                : circle_conn_coordinates.x,
+                        y_to:
+                            window.innerWidth < 640
+                                ? shape_data.conn.left.y
+                                : circle_conn_coordinates.y,
+                        by_top_side: by_top_side,
+                    });
                 };
 
                 that.clear = function() {
-                    $("#enjoyhint_arrpw_line").remove();
+                    $("#enjoyhint_arrow_line").remove();
                     $("#enjoyhint_label").remove();
                     $(window).off("resize.enjoy_hint");
                 };
