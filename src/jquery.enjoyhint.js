@@ -904,11 +904,11 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                         );
                     }
 
-                    var label_conn_coordinates = label_data.conn[conn_label_side];
-                    var circle_conn_coordinates = shape_data.conn[conn_circle_side];
-                    var by_top_side = arrow_side == "top";
-
                     if (that.stepData.hidden == false) {
+                        var label_conn_coordinates = label_data.conn[conn_label_side];
+                        var circle_conn_coordinates = shape_data.conn[conn_circle_side];
+                        var by_top_side = arrow_side == "top";
+
                         that.renderArrow({
                             x_from: label_conn_coordinates.x,
                             y_from: label_conn_coordinates.y,
