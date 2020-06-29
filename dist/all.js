@@ -782,7 +782,7 @@
 
                         tween.play();
                     } else {
-                        that.hide();
+                        that.clear();
                     }
 
                     var left = x - r;
@@ -840,7 +840,7 @@
 
                         tween.play();
                     } else {
-                        that.hide();
+                        that.clear();
                     }
 
                     var half_w = Math.round(w / 2);

@@ -780,7 +780,7 @@ var EnjoyHint = function (_options) {
 
                         tween.play();
                     } else {
-                        that.hide();
+                        that.clear();
                     }
 
                     var left = x - r;
@@ -838,7 +838,7 @@ var EnjoyHint = function (_options) {
 
                         tween.play();
                     } else {
-                        that.hide();
+                        that.clear();
                     }
 
                     var half_w = Math.round(w / 2);
