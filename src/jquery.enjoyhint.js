@@ -350,7 +350,14 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
 
                         tween.play();
                     } else {
-                        that.clear();
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: 0.002,
+                            center_x: -shape_init_shift,
+                            center_y: -shape_init_shift,
+                        });
+
+                        tween.play();
                     }
 
                     var left = x - r;
@@ -408,7 +415,14 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
 
                         tween.play();
                     } else {
-                        that.clear();
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: 0.002,
+                            center_x: -shape_init_shift,
+                            center_y: -shape_init_shift,
+                        });
+
+                        tween.play();
                     }
 
                     var half_w = Math.round(w / 2);
