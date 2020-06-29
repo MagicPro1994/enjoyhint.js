@@ -781,6 +781,8 @@
                         });
 
                         tween.play();
+                    } else {
+                        that.hide();
                     }
 
                     var left = x - r;
@@ -837,6 +839,8 @@
                         });
 
                         tween.play();
+                    } else {
+                        that.hide();
                     }
 
                     var half_w = Math.round(w / 2);
