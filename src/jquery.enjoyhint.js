@@ -337,21 +337,20 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var x = data.x || 0;
                     var y = data.y || 0;
 
-
-                    var tween = new Kinetic.Tween({
-                        node: that.shape,
-                        duration: 0.2,
-                        center_x: x,
-                        center_y: y,
-                        width: r * 2,
-                        height: r * 2,
-                        radius: r,
-                    });
-
                     if (data.hidden == false) {
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: 0.2,
+                            center_x: x,
+                            center_y: y,
+                            width: r * 2,
+                            height: r * 2,
+                            radius: r,
+                        });
+
                         tween.play();
                     } else {
-                        tween.destroy();
+                        that.hide();
                     }
 
                     var left = x - r;
@@ -396,20 +395,20 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var h = data.h || 0;
                     var margin = 20;
 
-                    var tween = new Kinetic.Tween({
-                        node: that.shape,
-                        duration: timeout,
-                        center_x: x,
-                        center_y: y,
-                        width: w,
-                        height: h,
-                        radius: r,
-                    });
-
                     if (data.hidden == false) {
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: timeout,
+                            center_x: x,
+                            center_y: y,
+                            width: w,
+                            height: h,
+                            radius: r,
+                        });
+
                         tween.play();
                     } else {
-                        tween.destroy();
+                        that.hide();
                     }
 
                     var half_w = Math.round(w / 2);
