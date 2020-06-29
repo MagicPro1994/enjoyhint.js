@@ -999,7 +999,8 @@
                     setTimeout(function() {
                         $("#enjoyhint_arrow_line").remove();
 
-                        if (that.stepData.hidden == false) {
+                        if (that.stepData.hidden == false &&
+                            window.innerWidth >= 640) {
                             var d =
                                 "M" +
                                 x_from +
