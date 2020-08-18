@@ -105,9 +105,9 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     '<div id="' + that.cl.kinetic_container + '">'
                 ).appendTo(that.enjoyhint);
                 that.$canvas = $(
-                    '<canvas id="' + canvas_id + 
-                    '" width="' + that.canvas_size.w + 
-                    '" height="' + that.canvas_size.h + 
+                    '<canvas id="' + canvas_id +
+                    '" width="' + that.canvas_size.w +
+                    '" height="' + that.canvas_size.h +
                     '" class="' + that.cl.main_canvas +
                     '">'
                 ).appendTo(that.enjoyhint);
@@ -337,17 +337,28 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var x = data.x || 0;
                     var y = data.y || 0;
 
-                    var tween = new Kinetic.Tween({
-                        node: that.shape,
-                        duration: 0.2,
-                        center_x: x,
-                        center_y: y,
-                        width: r * 2,
-                        height: r * 2,
-                        radius: r,
-                    });
+                    if (data.hidden == false) {
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: 0.2,
+                            center_x: x,
+                            center_y: y,
+                            width: r * 2,
+                            height: r * 2,
+                            radius: r,
+                        });
 
-                    tween.play();
+                        tween.play();
+                    } else {
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: 0.002,
+                            center_x: -shape_init_shift,
+                            center_y: -shape_init_shift,
+                        });
+
+                        tween.play();
+                    }
 
                     var left = x - r;
                     var right = x + r;
@@ -391,17 +402,28 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var h = data.h || 0;
                     var margin = 20;
 
-                    var tween = new Kinetic.Tween({
-                        node: that.shape,
-                        duration: timeout,
-                        center_x: x,
-                        center_y: y,
-                        width: w,
-                        height: h,
-                        radius: r,
-                    });
+                    if (data.hidden == false) {
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: timeout,
+                            center_x: x,
+                            center_y: y,
+                            width: w,
+                            height: h,
+                            radius: r,
+                        });
 
-                    tween.play();
+                        tween.play();
+                    } else {
+                        var tween = new Kinetic.Tween({
+                            node: that.shape,
+                            duration: 0.002,
+                            center_x: -shape_init_shift,
+                            center_y: -shape_init_shift,
+                        });
+
+                        tween.play();
+                    }
 
                     var half_w = Math.round(w / 2);
                     var half_h = Math.round(h / 2);
@@ -543,34 +565,38 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     that.enjoyhint.addClass(that.cl.svg_transparent);
 
                     setTimeout(function() {
-                        $("#enjoyhint_arrpw_line").remove();
+                        $("#enjoyhint_arrow_line").remove();
 
-                        var d =
-                            "M" +
-                            x_from +
-                            "," +
-                            y_from +
-                            " C" +
-                            control_point_x1 +
-                            "," +
-                            control_point_y1 +
-                            " " +
-                            control_point_x +
-                            "," +
-                            control_point_y +
-                            " " +
-                            x_to +
-                            "," +
-                            y_to;
+                        if (that.stepData.hidden == false &&
+                            window.innerWidth >= 640) {
+                            var d =
+                                "M" +
+                                x_from +
+                                "," +
+                                y_from +
+                                " C" +
+                                control_point_x1 +
+                                "," +
+                                control_point_y1 +
+                                " " +
+                                control_point_x +
+                                "," +
+                                control_point_y +
+                                " " +
+                                x_to +
+                                "," +
+                                y_to;
 
-                        that.$svg.append(
-                            makeSVG("path", {
-                                style: "fill:none; stroke:rgb(255,255,255); stroke-width:3",
-                                "marker-end": "url(#arrowMarker)",
-                                d: d,
-                                id: "enjoyhint_arrpw_line",
-                            })
-                        );
+                            that.$svg.append(
+                                makeSVG("path", {
+                                    style: "fill:none; stroke:rgb(255,255,255); stroke-width:3",
+                                    "marker-end": "url(#arrowMarker)",
+                                    d: d,
+                                    id: "enjoyhint_arrow_line",
+                                })
+                            );
+                        }
+
                         that.enjoyhint.removeClass(that.cl.svg_transparent);
                     }, that.options.animation_time / 2);
                 };
@@ -705,6 +731,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                                 x: data.center_x,
                                 y: data.center_y,
                                 r: data.radius,
+                                hidden: that.stepData.hidden
                             });
 
                             break;
@@ -737,6 +764,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                                     w: data.width,
                                     h: data.height,
                                     r: data.radius,
+                                    hidden: that.stepData.hidden
                                 },
                                 0.2
                             );
@@ -771,10 +799,10 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var button_height = 40;
                     var total_label_height =
                         label_height + button_spacing + button_height + 20; // Top of label to bottom of buttons
-                    
+
                     // Adjust label offset - y axis
                     label_y = label_y + data.label_offset_y;
-                    
+
                     // Attempt to cleanly prevent y axis overflow
                     if (label_y + total_label_height > window.innerHeight) {
                         label_y = window.innerHeight - total_label_height;
@@ -903,7 +931,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                     var label_conn_coordinates = label_data.conn[conn_label_side];
                     var circle_conn_coordinates = shape_data.conn[conn_circle_side];
                     var by_top_side = arrow_side == "top";
-                    
+
                     that.renderArrow({
                         x_from: label_conn_coordinates.x,
                         y_from: label_conn_coordinates.y,
@@ -920,7 +948,7 @@ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                 };
 
                 that.clear = function() {
-                    $("#enjoyhint_arrpw_line").remove();
+                    $("#enjoyhint_arrow_line").remove();
                     $("#enjoyhint_label").remove();
                     $(window).off("resize.enjoy_hint");
                 };
